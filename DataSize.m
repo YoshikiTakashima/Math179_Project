@@ -1,16 +1,23 @@
-function D = DataSize(M)
-%DATASIZE Calculates the data size of the matrix.
+function D = DataSize(image)
+%DATASIZE Calculates the data size of the 2D matrix.
 %   This is the number of non-zero entries. 
 %   Max of them if multiple channels.
-s = size(M);
-if nnz(s) == 2
-    D = nnz(M);
-else
-    a = zeros([1,s(3)]);
-    for i = 1:s(3)
-        a(i) = nnz(M(:,:,i));
+[H,W,~] = size(image);
+rectSide = ceil(min([H,W]) / 32);
+rectSize = [rectSide,rectSide];
+D = 0;
+for i = 1:rectSize(1):H
+    for j = 1:rectSize(2):W
+        haarImg = image(i:(i+(rectSize(1) - 1)),j:(j+(rectSize(2) - 1)));
+        for x = 1:rectSize(2)
+            haarImg(:,x) = HaarTf(haarImg(:,x));
+        end
+        for y = 1:rectSize(1)
+            haarImg(y,:) = HaarTf(haarImg(y,:));
+        end
+        
+        D = D + nnz(haarImg);
     end
-    D = max(a);
 end
 end
 
