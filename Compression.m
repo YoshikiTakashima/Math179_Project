@@ -4,7 +4,8 @@ function [cImage, sB, sA] = Compression(image,percent)
 %   Parts of the code copied over from HW#4.
 [H,W,~] = size(image);
 rectSide = ceil(min([H,W]) / 32);
-rectSize = [rectSide,rectSide];
+% rectSize = [rectSide,rectSide];
+rectSize = [8,8];
 
 sB = 0;
 sA = 0;
@@ -23,10 +24,14 @@ for i = 1:rectSize(1):H
         sB = sB + nnz(haarImg); %Before compression
         
         values = sort(abs(nonzeros(haarImg)));
-        numToDelete = ceil(percent * max(size(values)));
-        epsilon = values(numToDelete,1);
-        haarImg((-epsilon) <= haarImg & haarImg <= epsilon) = 0;
-        
+        s = size(values);
+        if max(s) > 1
+            numToDelete = min(s(1,1),ceil(percent * max(size(values))));
+            epsilon = values(numToDelete,1);
+            if values(numToDelete,1) < values(s(1,1),1)
+                haarImg((-epsilon) <= haarImg & haarImg <= epsilon) = 0;
+            end
+        end
         sA = sA + nnz(haarImg); %After compression
         
         raw(i:(i+(rectSize(1) - 1)),j:(j+(rectSize(2) - 1))) = haarImg;
