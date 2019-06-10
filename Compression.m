@@ -3,7 +3,7 @@ function [cImage, sB, sA] = Compression(image,percent)
 %   Eliminates least significant "percent" of haar coefficients.
 %   Parts of the code copied over from HW#4.
 [H,W,~] = size(image);
-rectSide = ceil(min([H,W]) / 32);
+% rectSide = ceil(min([H,W]) / 32);
 % rectSize = [rectSide,rectSide];
 rectSize = [8,8];
 
@@ -30,6 +30,9 @@ for i = 1:rectSize(1):H
             epsilon = values(numToDelete,1);
             if values(numToDelete,1) < values(s(1,1),1)
                 haarImg((-epsilon) <= haarImg & haarImg <= epsilon) = 0;
+            else
+                epsilon = values(numToDelete,1);
+                haarImg((-epsilon) < haarImg & haarImg < epsilon) = 0;
             end
         end
         sA = sA + nnz(haarImg); %After compression
