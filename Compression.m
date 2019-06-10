@@ -25,7 +25,7 @@ for i = 1:rectSize(1):H
         
         values = sort(abs(nonzeros(haarImg)));
         s = size(values);
-        if max(s) > 1
+        if max(s) > 1 && min(s) > 0 %added later && min(s) > 0
             numToDelete = min(s(1,1),ceil(percent * max(size(values))));
             epsilon = values(numToDelete,1);
             if values(numToDelete,1) < values(s(1,1),1)
